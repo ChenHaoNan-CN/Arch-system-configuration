@@ -1,59 +1,73 @@
-以下是我安装完ArchLinux进行的系统配置，可以当作教程来看，以我个人用着舒服为标准。本文不包括系统安装，与加密，安全启动。具体内容包括：Archlinux 常用命令,GNOME，KDE Plasma与xfce4桌面环境，系统汉化，中文输入法，虚拟机(qemu/kvm虚)安装与配置。
+下面给出一份「Arch Linux」下 `pacman` 与 `yay` 的常用命令速查表，已按「功能场景」分组，并采用 Unicode 框线与配色关键词，方便终端与 Markdown 双环境阅读。  
+直接复制到 `.md` 文件即可高亮，也可以 `less -R` 彩色查看。
 
 ---
-Arch Linux 以其简洁和控制力而闻名，熟悉其常用命令是高效使用这个系统的关键。
 
-| 类别 | 命令示例 | 功能简介 |
-| :--- | :--- | :--- |
-| **📦 软件包管理** | `pacman -Syu` | **更新系统**：同步软件库并升级所有包。 |
-| (pacman & AUR) | `pacman -S <软件包名>` | **安装软件包**。 |
-| | `pacman -Rs <软件包名>` | **删除软件包**及其不再需要的依赖。 |
-| | `pacman -Ss <关键词>` | **搜索软件库**中的包。 |
-| | `yay -S <软件包名>` | **从AUR安装软件包**（需要先安装`yay`)。 |
-| **📁 文件与目录** | `ls -la` | **列出目录内容**，显示详细信息和隐藏文件。 |
-| | `cp -r <源> <目标>` | **复制文件或目录**（`-r`选项用于递归复制目录）。 |
-| | `mv <旧名> <新名>` | **移动或重命名**文件或目录。 |
-| | `rm -r <文件或目录>` | **删除文件或目录**（`-r`选项用于递归删除，请谨慎使用）。 |
-| | `find /path -name "<文件名>"` | **在指定路径下搜索文件**。 |
-| **📝 文本处理** | `cat <文件>` | **查看整个文件内容**。 |
-| | `less <文件>` | **分页查看文件内容**，便于阅读长文件。 |
-| | `grep "<模式>" <文件>` | **在文件中搜索**指定的文本模式。 |
-| | `head/tail -n 20 <文件>` | **查看文件开头/结尾**的指定行数。 |
-| **🖥️ 系统与权限** | `sudo <命令>` | **以管理员权限执行**命令。 |
-| | `chmod +x <文件>` | **给文件添加可执行权限**。 |
-| | `useradd -m <用户名>` | **创建新用户**（`-m`选项同时创建家目录）。 |
-| | `systemctl start <服务名>` | **启动一个系统服务**。 |
-
-### 💡 实用技巧与拓展
-
-掌握基础命令后，下面这些技巧能让你的Arch体验更上一层楼。
-
-- **善用帮助**：几乎所有的命令都自带帮助信息。遇到不熟悉的命令时，可以尝试在命令后加上 `-h` 或 `--help` 选项。更详细的说明则可以使用 `man <命令名>` 来查看其手册页。
-
-- **探索现代替代工具**：Arch社区充满活力，许多经典命令有了更友好、功能更强的替代品。例如：
-    - **`bat`**：替代 `cat`，支持语法高亮和行号。
-    - **`exa`**：替代 `ls`，更好的文件类型区分和色彩显示。
-    - **`fd`**：替代 `find`，速度更快，默认忽略.gitignore中的文件，用法更直观。
-
-- **理解pacman**：作为Arch的灵魂，`pacman` 还有一些常用操作：
-    - `pacman -Qs <关键词>`：搜索**已安装**的软件包。
-    - `pacman -Ql <软件包名>`：列出某个已安装包的所有文件。
-    - 定期使用 `pacman -Sc` 可以**清理软件包缓存**，释放磁盘空间。
-
-- **拥抱AUR**：Arch用户仓库（AUR）是其软件生态的重要组成部分。使用像 `yay` 这样的AUR助手，可以让你像使用pacman一样轻松地从AUR安装成千上万的社区维护软件。
-
+### 🚀 Arch Linux 包管理速查表 · 美化版
+| 场景 | 命令（含常用别名） | 备注 / 小贴士 |
+|---|---|---|
+| **🗂️ 同步仓库** | `sudo pacman -Sy` | 仅更新索引，**不**升级系统 |
+| | `sudo pacman -Syu` | 完整升级系统（含同步索引） |
+| | `sudo pacman -Syyu` | 强制刷新索引再升级（解决仓库切换） |
+| **📦 安装** | `sudo pacman -S 包名` | 支持正则：`pacman -S --needed firefox` |
+| | `yay -S 包名` | AUR + 官方仓库混合安装 |
+| | `yay -S --noconfirm 包名` | 无交互，CI 场景 |
+| **🔍 搜索** | `pacman -Ss 关键字` | 搜索官方仓库 |
+| | `yay -Ss 关键字` | 同时搜官方 + AUR，结果高亮 |
+| | `pacman -Qs 关键字` | 搜索**已安装**包 |
+| | `yay -Qs 关键字` | 同上，支持 AUR |
+| **📋 信息** | `pacman -Qi 包名` | 已安装包的详情 |
+| | `pacman -Si 包名` | 仓库包的详情 |
+| | `yay -Qi 包名` | AUR 包也能看 |
+| | `pactree 包名` | 依赖树（需 `pacman-contrib`） |
+| **🧹 清理** | `sudo pacman -Sc` | 删除 `/var/cache/pacman/pkg` 旧版本 |
+| | `sudo pacman -Scc` | **全部**清空缓存，慎用 |
+| | `yay -Sc` | 同步清理官方 + AUR 缓存 |
+| | `yay -Yc` | 删除**孤立**的 AUR 依赖 |
+| **❌ 卸载** | `sudo pacman -R 包名` | 保留配置 |
+| | `sudo pacman -Rs 包名` | 递归卸载，连带孤儿依赖 |
+| | `sudo pacman -Rns 包名` | 再加 `--nosave`，**连配置一起删** |
+| **🔧 数据库维护** | `sudo pacman -Dk` | 检查本地数据库一致性 |
+| | `sudo pacman -Fy` | 更新文件索引 |
+| | `pacman -F 文件名` | 查文件属于哪个包（需先 `-Fy`） |
+| **🌟 AUR 专用** | `yay -Y --gendb` | 生成 AUR 开发包数据库 |
+| | `yay -Y --devel --upgrade` | 升级所有 `-git` 开发版 |
+| | `yay -Ps` | 打印系统统计（仓库数、包数、缓存大小） |
+| | `yay -G 包名` | 仅下载 AUR 源码到当前目录 |
+| **🔄 降级** | `sudo downgrade 包名` | 需安装 `downgrade`（AUR） |
+| | `sudo pacman -U /var/cache/pacman/pkg/xxx.pkg.tar.zst` | 手动安装本地缓存旧版本 |
+| **🆘 急救** | `sudo pacman -S $(pacman -Qnq)` | 重装所有包（修复误删系统文件） |
+| | `sudo pacstrap /mnt base linux linux-firmware` | LiveCD 环境重建系统 |
 
 ---
-### Arch Linux 配置指南目录
 
-#### 一、桌面环境安装与配置
-##### 1. GNOME 桌面环境
-##### 2. KDE Plasma 桌面环境  
-##### 3. XFCE 桌面环境
-#### 二、系统汉化配置
-#### 三、中文输入法安装与配置
-#### 四、虚拟机安装与配置
-##### 1. QEMU/KVM 虚拟化
-##### 2. 虚拟机安装与配置
+### 🎨 终端配色提示
+把下面追加到 `~/.bashrc` 或 `~/.zshrc`，即可让 `pacman` 与 `yay` 输出更漂亮：
+
+```bash
+# Pacman 彩色输出
+export PACMAN_COLORS="ILoveCandy"
+
+# Yay 彩色输出
+export YAY_COLORS=1
+```
 
 ---
+
+### 🚀 一行安装「常用工具箱」
+```bash
+yay -S --needed base-devel git wget curl neovim exa bat fd ripgrep downgrade pacman-contrib
+```
+
+---
+
+### 📌 别名速记（可选）
+```bash
+alias update='yay -Syu --devel --timeupdate'
+alias cleanup='yay -Sc && yay -Yc'
+alias orphans='sudo pacman -Rns $(pacman -Qtdq)'
+```
+
+---
+
+祝使用愉快，滚挂随缘 😉
